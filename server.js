@@ -18,7 +18,16 @@ const app = express();
 const port = process.env.PORT || 5001;
 
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173", 
+   "https://finance-web-front-end.vercel.app", 
+];
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,  
+  })
+);
 
 // 🔹 Enforce HTTPS in production
 app.use((req, res, next) => {
