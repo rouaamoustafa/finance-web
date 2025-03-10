@@ -10,7 +10,6 @@ export const loginAdmin = async (req, res) => {
       return res.status(400).json({ error: "Missing email or password" });
     }
 
-    // 🔹 Fetch the user by email
     const { data, error } = await supabase
       .from("admins")
       .select("*")
@@ -24,14 +23,12 @@ export const loginAdmin = async (req, res) => {
 
     const user = data[0];
 
-    // 🔹 Compare hashed password
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
+    // ✅ FIX: Compare passwords as plain text
+    if (user.password !== password) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // 🔹 Generate JWT Token
+    // ✅ Create JWT token
     const payload = { admin_id: user.admin_id, role: user.role };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
